@@ -1,2 +1,2 @@
 # script-for-Harness
-Some script used with Harness
+Some scripts used with Harness
