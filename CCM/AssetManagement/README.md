@@ -6,8 +6,10 @@ This script can be call used in a pipeline called by an asset management rule to
 matching the asset governance rule.
 
 Command to launch it ( with the right value in the variables):
+```
 python3 createCBucket.py --account "$account" --api_key "$api_key" --CCName "$CCName" --CBName "$CBName" --Scope "$Scope" --fieldName "$fieldName" --Values "$Values"
-account: Harness account id
+```
+account: Harness account id \n
 api_key: Harness api key
 CCName: Cost Category name
 CBName: Cost Bucket name
