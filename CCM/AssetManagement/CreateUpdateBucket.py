@@ -120,3 +120,4 @@ else:
 response=response.json()["responseMessages"]
 if response != []:
     print(response[0]["message"])
+    sys.exit(1)
