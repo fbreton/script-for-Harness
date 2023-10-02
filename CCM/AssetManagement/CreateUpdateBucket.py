@@ -13,14 +13,20 @@ parser.add_argument('--account', help='Harness Account Id')
 parser.add_argument('--CCName', help='Cost Category Name')
 parser.add_argument('--CBName', help='Cost Bucket Name')
 parser.add_argument('--Scope', help='Kind of Cloud')
+parser.add_argument('--Region', help='region')
 parser.add_argument('--fieldName', help='fieldName to filter on')
 parser.add_argument('--Values', help='Values to filter on')
 parser.add_argument('--api_key', help='api')
 args = vars(parser.parse_args())
 account_id = args['account']
+Region = args['Region']
+if Region == []:
+    Region = ""
+else:
+    Region = Region[0]
 CCName = args['CCName']
 CCNameSearch = urllib.parse.quote(CCName)
-CBName = args['CBName']
+CBName = args['CBName'] + " - " + Region
 Scope = args['Scope']
 fieldName = args['fieldName']
 Values = args['Values'].replace('[','').replace(']','').split(',')
@@ -48,6 +54,11 @@ elif Scope == "GCP":
 else:
     print(Scope + "not supported")
     sys.exit(1)
+
+# if no resources,then we can exit
+if  Values == []:
+    print("No " + fieldName + " provided so we won't update the Cost Category " + CCName)
+    sys.exit()
 
 # Cost Bucket definition
 costBucket= {
