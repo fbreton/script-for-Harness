@@ -16,4 +16,29 @@ python3 createCBucket.py --account "$account" --api_key "$api_key" --CCName "$CC
 **Scope**: Cloud (AZURE, AWS)  
 **Region**: the region of the asset
 **fieldName**: name of the field on which to filter ("Instance Id" for exemple)  
-**Values**: the result of the asset rule, so typically a list of values to filter for the fieldName  
+**Values**: the result of the asset rule, so typically a list of values to filter for the fieldName
+
+The following is an asset governance rule exemple that call an Harness pipeline containing a step to run the script:
+
+````
+ policies:
+  - name: orphaned-disk
+    resource: azure.disk
+    filters:
+      - type: value
+        key: properties.diskState
+        value: "Unattached"
+    actions:
+        - type: webhook
+          url: "https://app.harness.io/gateway/pipeline/api/webhook/custom/v2?accountIdentifier=string&orgIdentifier=string&projectIdentifier=stringx&pipelineIdentifier=string&triggerIdentifier=string"
+          batch: true
+          body: |-
+            {
+                "CCName": 'Unused Assets',
+                "CBName": 'Azure Unattached Disk',
+                "Scope": 'AZURE',
+                "fieldName": 'Instance id',
+                "Values": resources[].id,
+                "Region": resources[0].location
+            }
+```
