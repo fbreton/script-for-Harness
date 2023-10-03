@@ -18,7 +18,7 @@ python3 createCBucket.py --account "$account" --api_key "$api_key" --CCName "$CC
 **fieldName**: name of the field on which to filter ("Instance Id" for exemple)  
 **Values**: the result of the asset rule, so typically a list of values to filter for the fieldName
 
-The following is an asset governance rule exemple that call an Harness pipeline containing a step to run the script:
+The following is an asset governance rule exemple that calls an Harness pipeline containing a step to run the script:
 
 ````
  policies:
