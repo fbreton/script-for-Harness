@@ -20,10 +20,7 @@ parser.add_argument('--api_key', help='api')
 args = vars(parser.parse_args())
 account_id = args['account']
 Region = args['Region']
-if Region == []:
-    Region = ""
-else:
-    Region = Region[0]
+
 CCName = args['CCName']
 CCNameSearch = urllib.parse.quote(CCName)
 CBName = args['CBName'] + " - " + Region
