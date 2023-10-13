@@ -41,7 +41,7 @@ release_status = {
 }
 
 # release variable if it is the first update and variable creation
-value = { "environments":[release_status]}
+value = [release_status]
 value = json.dumps(value)
 release_variable = {
     "variable":{
@@ -87,24 +87,25 @@ if not exist:
 # Variable already exist
 # Get the environment if deployment already happened for the release in the environment
 i = 0
-last = len(value['environments'])
+last = len(value)
 id_env = last
 while i < last:
-    if value['environments'][i]['env_id'] == env_id:
+    if value[i]['env_id'] == env_id:
         id_env = i
+        i = last
     i += 1
 
 # No deployment in the env
 if id_env == last:
-    value['environments'].append(release_status)
+    value.append(release_status)
 else:
 # Env already had a deployment
     try:
-        i = value['environments'][id_env]['services'].index(service)
+        i = value[id_env]['services'].index(service)
         print("Service " + service + " already tag as deployed in environment " + env_id)
         sys.exit()
     except ValueError:
-        value['environments'][id_env]['services'].append(service)
+        value[id_env]['services'].append(service)
 
 # Update the variable
 release_variable['variable']['spec']['fixedValue'] = json.dumps(value)

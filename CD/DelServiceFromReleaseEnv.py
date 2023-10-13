@@ -49,35 +49,35 @@ while i < items:
         exist = True
     i += 1
 if not exist:
-    print("Service " + service + " has not been tagged a deployed in environment " + env_id)
+    print("Service " + service + " has not been tagged as deployed in environment " + env_id + " for release " + release)
     sys.exit()
 
 # the variable exit
 # Get the environment if deployment already happened for the release in the environment
 i = 0
-last = len(value['environments'])
+last = len(value)
 id_env = last
 while i < last:
-    if value['environments'][i]['env_id'] == env_id:
+    if value[i]['env_id'] == env_id:
         id_env = i
         i = last
     i += 1
 
 # No deployment in the env
 if id_env == last:
-    print("Service " + service + " has not been tagged a deployed in environment " + env_id)
+    print("Service " + service + " has not been tagged as deployed in environment " + env_id + " for release " + release)
     sys.exit()
 
 # Env already had a deployment
 try:
-    i = value['environments'][id_env]['services'].index(service)
-    value['environments'][id_env]['services'].pop(i)
+    i = value[id_env]['services'].index(service)
+    value[id_env]['services'].pop(i)
     release_variable['variable']['spec']['fixedValue'] = json.dumps(value)
     response = requests.request("PUT",url,data=json.dumps(release_variable),headers=headers).json()
     if response['status'] != "SUCCESS":
         print(response['message'])
         sys.exit(1)
-    print("Service " + service + " untag as deployed in environment " + env_id)
+    print("Service " + service + " untag as deployed in environment " + env_id + " for release " + release)
 except ValueError:
-    print("Service " + service + " has not been tagged a deployed in environment " + env_id)
+    print("Service " + service + " has not been tagged as deployed in environment " + env_id + " for release " + release)
 
