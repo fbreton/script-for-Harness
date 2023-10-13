@@ -64,10 +64,19 @@ url= "https://app.harness.io/ng/api/variables/?accountIdentifier="+account_id+ "
 response = requests.request("GET", url, headers=headers).json()
 data = response['data']
 items = data['totalItems']
+exist = False
+i = 0
+while i < items:
+    if data['content'][i]['variable']['name'] == release_name:
+        release_variable = data['content'][i]
+        value = json.loads(release_variable['variable']['spec']['fixedValue'])
+        i = items
+        exist = True
+    i += 1
 
 # Variable does not already exist
 url = "https://app.harness.io/ng/api/variables?accountIdentifier="+account_id
-if items == 0:
+if not exist:
     response = requests.request("POST",url,data=json.dumps(release_variable),headers=headers).json()
     if response['status'] != "SUCCESS":
         print(response['message'])
@@ -76,14 +85,6 @@ if items == 0:
     sys.exit()
 
 # Variable already exist
-i = 0
-while i < items:
-    if data['content'][i]['variable']['name'] == release_name:
-        release_variable = data['content'][i]
-        value = json.loads(release_variable['variable']['spec']['fixedValue'])
-        i = items
-    i += 1
-
 # Get the environment if deployment already happened for the release in the environment
 i = 0
 last = len(value['environments'])
