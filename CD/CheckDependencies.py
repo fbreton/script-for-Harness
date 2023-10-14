@@ -48,7 +48,7 @@ else:
     last = len(dependencies)
     i=0
     while i < last:
-        if len(dependencies[i]['services'] > 0):
+        if len(dependencies[i]['services']) > 0:
             dep_to_wait.append(dependencies[i])
         i += 1
     if dep_to_wait == []:
@@ -102,10 +102,14 @@ while dep_to_wait != []:
     # we informe about the status of the waiting dépendencies
     if dep_to_wait != []:
         print("Waiting for the following services to be deployed in environment " + env_id + ":")
-    else:
-        print("All dependencies are tagged as being deployed in environment " + env_id)
-        for i in dep_to_wait:
-            for j in dep_to_wait[i]['services']:
-                idx = (i+1)*(j+1)
-                print("   " + idx + ". " + dep_to_wait[i]['services'][j] + " from application " + dep_to_wait[i]['appId'])
+        i = 1
+        for dep_inst in dep_to_wait:
+            j = 1
+            for serv_inst in dep_inst['services']:
+                idx = i * j
+                print("   " + str(idx) + ". " + serv_inst + " from application " + dep_inst['appId'])
+                j += 1
+            i += 1
         time.sleep(pollTime)
+    else:
+        print("All dependencies for service " + service + "are tagged as being deployed in environment " + env_id)
