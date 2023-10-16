@@ -82,8 +82,8 @@ while dep_to_wait != []:
         # Then we remove the servise already deployed from the waiting list
         if exist:
             i = 0
-            last = len(value)
-            while i < last:
+            last_dep = len(value)
+            while i < last_dep:
                 if value[i]['env_id'] == env_id:
                     for serv_dep in value[i]['services']:
                         try:
@@ -91,7 +91,7 @@ while dep_to_wait != []:
                             dep_to_wait[indx_dptw]['services'].pop(idx_serv_dev)
                         except ValueError:
                             pass
-                    i = last
+                    i = last_dep
                 i += 1
         if dep_to_wait[indx_dptw]['services'] == []:
             last -= 1
