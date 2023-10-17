@@ -40,7 +40,7 @@ headers = {
 
 #Check there's some dependencies to check
 dep = True
-if dependencies is None:
+if (dependencies is None) or (dependencies == "null"):
     dep = False
 else:
     dep_to_wait = []
