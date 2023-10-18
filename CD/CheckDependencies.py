@@ -24,7 +24,7 @@ args = vars(parser.parse_args())
 account_id = args['account']
 api_key = args['api_key']
 release = args['ReleaseName'].replace(".","_")
-release_name = release + "_Status"
+def_release_name = release + "_Status"
 org_id = args['OrgId']
 service = args['Service']
 env_id = args['EnvId']
@@ -65,6 +65,10 @@ while dep_to_wait != []:
         
         # First we load the deploiment status for project
         depApp = dep_to_wait[indx_dptw]
+        try:
+            release_name = depApp['ReleaseName'].replace(".","_") + "_Status"
+        except ValueError:
+            release_name = def_release_name
         url= "https://app.harness.io/ng/api/variables/?accountIdentifier="+account_id+ "&orgIdentifier=" +org_id+"&projectIdentifier="+depApp['appId']+"&searchTerm="+release_name
         response = requests.request("GET", url, headers=headers).json()
         data = response['data']
