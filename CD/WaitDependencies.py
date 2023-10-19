@@ -22,8 +22,8 @@ args = vars(parser.parse_args())
 
 account_id = args['account']
 api_key = args['api_key']
-def_release = args['ReleaseName'].replace(".","_")
-def_release_name = def_release + "_Status"
+def_release = args['ReleaseName']
+def_release_name = def_release.replace(".","_") + "_Status"
 org_id = args['OrgId']
 service = args['Service']
 env_id = args['EnvId']
