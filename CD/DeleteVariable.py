@@ -14,8 +14,6 @@ parser.add_argument('--OrgId', help='Organisation Id')
 parser.add_argument('--ProjId', help='Project Id')
 parser.add_argument('--api_key', help='api')
 parser.add_argument('--Name',help="Variable Name")
-parser.add_argument('--Value',help="Variable Value")
-parser.add_argument('--desc',help="Variable Description")
 
 args = vars(parser.parse_args())
 
