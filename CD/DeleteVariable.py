@@ -43,7 +43,7 @@ if org_id != "":
 
 #Delete the variable
 url = "https://app.harness.io/ng/api/variables/" + var_name + "?accountIdentifier=" + account_id + url_add
-response = requests.request("DEL",url,headers=headers).json()
+response = requests.request("DELETE",url,headers=headers).json()
 
 #If error, provide error message
 if response['status'] != "SUCCESS":
