@@ -30,7 +30,7 @@ org_id = args['OrgId']
 proj_id = args['ProjId']
 from_env_id = args['FromEnvId']
 to_env_id = args['ToEnvId']
-avail_file = urllib.parse.quote(urllib.parse.quote("/"+ def_release + "/" + args['AvailFile'], safe=''))
+avail_file = urllib.parse.quote(urllib.parse.quote(args['AvailFile'], safe=''))
 
 #Control that we've the right arguments
 
