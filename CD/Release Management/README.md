@@ -11,3 +11,5 @@ This can be illustrated with the following pipeline:
 
 With deployment stage beeing like:  
 ![CD pipeline](deployment.png "CD pipeline")
+
+What ever is the deployment process of the service (in the exemple it is a K8s deployment), the first step of the deployment stage is to wait for the dependencies and the last step is to declare that the service has been deployed.
