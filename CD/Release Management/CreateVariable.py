@@ -51,7 +51,7 @@ variable = {
     }
 }
 
-#Adding the vriable
+#Adding the variable
 url = "https://app.harness.io/ng/api/variables?accountIdentifier=" + account_id
 response = requests.request("POST",url,data=json.dumps(variable),headers=headers).json()
 

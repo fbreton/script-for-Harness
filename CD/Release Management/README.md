@@ -15,3 +15,35 @@ With deployment stage beeing like:
 ![CD pipeline](deployment.png "CD pipeline")
 
 What ever is the deployment process of the service (in the exemple it is a K8s deployment), the first step of the deployment stage is to wait for the dependencies and the last step is to declare that the service has been deployed.
+
+In the sub directory HarnessSample you'll find harness template using the scripts and an full exemple with all needed object for an application release management following the constraints as mentioned before.
+
+# Role and usage of each script
+
+## CreateVariable.py
+
+This script create an harness string variable at project level. 
+Command to launch the script from a shell ( with the right value in the variables):
+```
+python3 CreateVariable.py --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG" --ProjId "$PROJ" --Name "$VARNAME" --Value "$VARVALUE" --desc "$VARDESC"
+```
+**account**: Harness account id  
+**api_key**: Harness api key allowing to access to the targeted project with the needed rights 
+**OrgId**: Organisation identifier
+**ProjId**: Project identifier
+**Name**: The variable Name/identifier that should not already exist 
+**Value**: The string value to allocate to the variable 
+**desc**: descrition of the variable
+
+## DeleteVariable.py
+
+This script delete an harness variable. 
+Command to launch the script from a shell ( with the right value in the variables):
+```
+python3 DeleteVariable.py --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG" --ProjId "$PROJ" --Name "$VARNAME"
+```
+**account**: Harness account id  
+**api_key**: Harness api key allowing to access to the variable with the needed rights 
+**OrgId**: Organisation identifier if the variable to delete is at organisation level or project level
+**ProjId**: Project identifier if the variable to delete is at project level
+**Name**: The variable identifier to delete
