@@ -53,7 +53,7 @@ python3 DeleteVariable.py --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG" -
 ## AddServiceToReleaseEnv.py
 
 This script create or update a variable that with an identifier that is the ReleaseName_Status for which we want to update the deployed components (services) for a specific environment. The goal is to be able to follow the deployment status of a release. For exemple if 2 services, serv1 and serv2, has been deployed to QA, UAT and PROD environments for release V1 of application (poject) APP1, then variable V1_Status should have been created and updated in project APP1 containing:  
-````
+```
 [
     {"env_id": "QA", 
      "services": [serv1, serv2]}, 
