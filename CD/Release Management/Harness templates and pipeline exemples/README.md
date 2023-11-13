@@ -10,7 +10,7 @@ This has been done to answer to the following constraints when a release is depl
 
 To [illustrate the usage](#usage-illustration), you've also 2 pipeline definitions that deploy 2 services, one being dependent of the other, representing an application APP1 that is contained in a project with the same name.
 
-Execution of steps, stages based on those templates need to use delegate that have python installed on them. Python version that has been tested with those templates is 8.11.
+Execution of steps, stages based on those templates need to use delegate that have python installed on them. Python version that has been tested with those templates is 3.11.
 
 # Templates
 
