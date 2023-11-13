@@ -15,8 +15,17 @@ To ilustrate the usage, you've also 2 pipeline definitions that deploy 2 service
 ## CreateVariable.yml
 
 This template creates an harness string variable at project level and requires the following inputs:  
+
 **API**: API token to access to the project - mandatory  
 **VARNAME**: Variable name/id to be created - mandatory  
 **VARVALUE**: String value to allocate to the variable - mandatory  
 **VARDESC**: description to associate to the variable  
+
+
+## DeleteVariable.yml
+
+This template remoce a variable at the project level and requires the followin inputs:  
+
+**API**: API token to access to the project - mandatory  
+**VARNAME**: Variable name/id to be removed - mandatory  
 
