@@ -52,7 +52,7 @@ python3 DeleteVariable.py --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG" -
 
 ## AddServiceToReleaseEnv.py
 
-This script create or update a variable that with an identifier that is the ReleaseName_Status for which we want to update the deployed components (services) for a specific environment. The goal is to be able to follow the deployment status of a release. For exemple if 2 services, serv1 and serv2, has been deployed to QA, UAT and PROD environments for release V1 of application (poject) APP1, then variable V1_Status should have been created and updated in project APP1 containing:  
+This script creates or updates a variable with an identifier that is the <ReleaseName>_Status for which we want to update the deployed components (services) for a specific environment. The goal is to be able to follow the deployment status of a release. For exemple if 2 services, serv1 and serv2, has been deployed to QA, UAT and PROD environments for release V1 of application (poject) APP1, then variable V1_Status should have been created and updated in project APP1 containing:  
 ```
 [
     {"env_id": "QA", 
@@ -73,5 +73,21 @@ python3 AddServiceToReleaseEnv.py --account "$ACCOUNT" --api_key "$API" --OrgId 
 **OrgId**: Organisation identifier  
 **ProjId**: Project identifier  
 **Service**: The service identifier that was deployed  
-**EnvId**: The environment identifier in which the service was deployed
-**RleaseName**: The release name associated with the deployment
+**EnvId**: The environment identifier in which the service was deployed  
+**RleaseName**: The release name associated with the deployment  
+
+## DelServiceFromReleaseEnv.py
+
+This script updates a variable with an identifier that is the <ReleaseName>_Status for which we want to update the deployed components (services) for a specific environment, removing a component that has been uninstalled. The goal is to be able to follow the deployment status of a release.  
+
+Command to launch the script from a shell ( with the right value in the variables):
+```
+python3 DelServiceFromReleaseEnv.py --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG" --ProjId "$PROJ" --Service "$SERVICE" --EnvId "$ENVID" --ReleaseName "$RELEASE"
+```
+**account**: Harness account id  
+**api_key**: Harness api key allowing to access to the targeted project with the needed rights  
+**OrgId**: Organisation identifier  
+**ProjId**: Project identifier  
+**Service**: The service identifier that has been uninstalled  
+**EnvId**: The environment identifier in which the service was uninstalled  
+**RleaseName**: The release name associated with the deployment  
