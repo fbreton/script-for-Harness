@@ -12,9 +12,9 @@ To ilustrate the usage, you've also 2 pipeline definitions that deploy 2 service
 
 # Templates
 
-## CreateVariable.yml
+## CreateVariable.yaml
 
-This template creates an harness string variable at project level and requires the following inputs:  
+This template is a ShellScript step template that creates an harness string variable at project level and requires the following inputs:  
 
 **API**: API token to access to the project - mandatory  
 **VARNAME**: Variable name/id to be created - mandatory  
@@ -22,24 +22,31 @@ This template creates an harness string variable at project level and requires t
 **VARDESC**: description to associate to the variable  
 
 
-## DeleteVariable.yml
+## DeleteVariable.yaml
 
-This template remove a variable at the project level and requires the followin inputs:  
+This template is a ShellScript step template that removes a variable at the project level and requires the followin inputs:  
 
 **API**: API token to access to the project - mandatory  
 **VARNAME**: Variable name/id to be removed - mandatory  
 
-## MarkAsDeployed.yml
+## MarkAsDeployed.yaml
 
-This template add the service identifier of the deployement stage in which it is used to the list of services deployed for a specific release to the environment of the deployment stage. It requires the following inputs:  
+This template is a step group template that adds the service identifier of the deployement stage in which it is used to the list of services deployed for a specific release to the environment of the deployment stage. It requires the following inputs:  
 
 **ReleaseName**: The release name for which the service deployed is part of - mandatory  
 **ApiKey**: API token to access to the project - mandatory  
 
-## UncheckService.yml
+## UncheckService.yaml
 
-This template remove the service identifier of the deployement stage in which it is used to the list of services deployed for a specific release to the environment of the deployment stage. It requires the following inputs:  
+This template is a step group template that removes the service identifier of the deployement stage in which it is used to the list of services deployed for a specific release to the environment of the deployment stage. It requires the following inputs:  
 
 **RELEASE**: The release name for which the service removed was part of - mandatory  
+**API**: API token to access to the project - mandatory  
+
+## WaitDependencies.yaml
+
+This template is a CustomApproval step template that wait until the dependencies requiered by the service, that is deployed in the deployement stage in which it is used, to be declared as deployed. It requires the following inputs:  
+
+**RELEASE**: The release name for which the service to be deployed is part of - mandatory  
 **API**: API token to access to the project - mandatory  
 
