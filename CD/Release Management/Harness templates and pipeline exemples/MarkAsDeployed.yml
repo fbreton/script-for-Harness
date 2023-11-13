@@ -1,0 +1,190 @@
+template:
+  name: MarkAsDeployed
+  identifier: MarkAsDeployed
+  versionLabel: V1
+  type: StepGroup
+  orgIdentifier: <your organisation identifier>
+  tags: {}
+  icon: data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAMAAAAKE/YAAAAAM1BMVEUAAABrqhprqhprqhprqhprqhprqhprqhprqhprqhprqhprqhprqhprqhprqhprqhprqhoLwee9AAAAEHRSTlMAfz+/D+8v388fn19vT6+PqhWDDwAABwNJREFUeNrsm+uO6yAMhG2DIUBC/P5Pe7q9iGSXS1sphB71+7PS7kqZOBODhxa+fPny5UsGIjLwWQSWCwE+CpYfGD4KJVccfBJWriDc0TS+/iB3PGm4QCxMMCQGze2nlw2RIMiwr6VhEa+BlPzCyo0Ba21YLrCXIgjDYaXMsL1EWswwHlHqKBgQPUkVDyNiWPKM2zwu+J0bENHz8P5wkvDusdsbvNQoDzikO5nGLnVq1AES2ibVixttMHCFPkGyY4WRmOWBqzZwGAWDuLLcibBnGVN0qO6L9JiisSoaZIuFQXhFND4zydvVwNFgtT/QplOvBAm9zA7+4FguHK97rhpglQc7GRpZRJZKBaZZw3EYSfwZBjXn7sZ5ucK6NkxMR6peEDFdbC/EZ3zjfNHjpuuEFnYFyvnd7X+XL/XaVTSoja3p4Y24uZWn2rrtO6KRbFDBgKaVcwKUSLbUjohC71lYSRVMLt8xqQuS6LsSkdRZnvi//ltCK1XYwY1JboyQlPhnCxfkOSY4nFla+PRImnTKLFmkbY92qZt9uo+jbbi2azbZZe/EiCeFNT5MvyRfvcO8ZIbdNkrDoRi+LyEOk6q5HqC1mQ5W7WJ8WMDYcgOI8hJsoBe++CZ5eRGm+9aQjzYLlkQHeZ3wI7lD6zaF/C7IO6Dv07pRKYVUaDHvY6EXAdHUNHNEIgBHYZ3OXyVv4H28LjQ7tcAGh/aUDUkpYrI2J9lkko/zTxSClOEFMmh/+olTxaaTK8dMRQwcj3triTZ86oHk2tLcVt1ftJUCrLdxj7rggyvl2gmr4XBMuw1oTFWNpvGIvIbjweb+nvZGWGvbbkXQA9UyRyhanTpLbr+HmDQXVU99O3R7TnF/LN/MGhT0I0yVLcRUe0c1dxedcHMsNNsgWdQYZ5AmvxbHeiA2nysaVO76urHq0VCip0aAGsc4OFU5086t/eeIonFw0fjfiC7bYwxP70Vz40Vcs38n6Ea2qLoeai/ZtWeBzlD2+l6ycOEgjKAv1H7+CcycLnT4cEJLtK1lqKwrE5edoRuUd622WUdXzROhF1H2qPLUvbbCB+gDqWI5jS0YGuKpokllo4BsCGYJ7ixnZpBatazpPD8kp48A6VPTGvXMxWlGxOCeOgNzcDzvBeTx3IRayszNGb6/O9pncFFDDjOd/dUTIxXs0o7STllalNRQv2TrYOUvvKq+J0UkdeyaAtTlX3vntqw6CIPhhhAox/L+T7udNXahpfSgLEz3+F06XqS/aYAc0FItlS1d7Dl6gmmXESNE1Ds5admxP7+Umm1Nf0Vqq8b0At1tzgGEQC4CIJtWpnVURC8Xh0U2jUx75HIFmzamg6jxejY/N/teaIzRXsqhZxy7ppQjWObxbhW4otQj96VlBcOw1epsElVjuoE4OTU44jokP24EtrDMCjPBbIqJu0uiESDEZxO/Yz2IEwwlIn6knCFpc9nTvybLocDpPOfdl6C3XjVXNVkCLXs/1IToOzl+iBspo2lucX/G2MJkgXngoAfSjfX6j1wzuUiWKLw/txr6YTxiOJkv1i4/Bce94IrJ5LN7z+7FbO4/A8t301Mpc4iUElk2y9HPIS2bHHQps5s/Iz7SSzD5/StDvNDpF81H67JTOctssPlxWAkR4IYQwrwvOBUySyjq1O9gAizTioQWhNx5xp8aTETEUeNkhoynUuagG/azh0mnGhoBxC8Bbtjq4Oq00lAJhWe8ZPTzb68spUZkH5VZ5kL6k0Yb4Se83y1mcttjS+C5FAJFHDns0zIAIlJ5EHU6teYuxkJmOJtMMzat4tqbnAtxWHpzvfeiJFDqSZylzTI7Opt2EKkvOJejD2Qxbf281BdcxvL6gISvp+I6Y3cHvnc3qjL1xpUJ7uo6xMSjE8lDpQQSAyOj4VDcinJgZLQ94s7khoGR0VOxmd4auePwIj5tTYV+ozozpg7oCME8aTVVv6rONha0RyM4UT2zlEzyRMmkPWPM5j4RbKpB4UQmv70zVH5k5bHFzRTib50hIwUgpQ3INy707BMhiKGCChDHVOd8TqyNxGZd3AAW9R+Uocdmi0ZGCADEMw8t2jVTna0RKuEhYjpNkWnsE/M0WKT0GhTeqV72px7oWG2ZKoHuJCp9hDeT/+mDQIPrArpSD3Sf3+fVmWSDKfa+UHiv3NSZ8uh6jZhHvmXXPFmwlP6a0bScqrCyck7mEegeoKxAdTaFwXpSi3mu4uZcAt1q4lStr5I81pNazFNlCoelzDdc4R4hNaZ9s5Io6udjakz7+77lYp2SsbnB1pmhMekBBHzZNHwAZkIxh9NlJivCI0E8IIeP4bfk49PWevx+Nn6tLTP2gjbXhkqJaZvcHVNajVMYuAN6lhcR/AX+BjHflH8ZY798+fLl/+YffNSPeeZoCLIAAAAASUVORK5CYII=
+  spec:
+    stageType: Deployment
+    steps:
+      - step:
+          type: Queue
+          name: GetAccessToVariable
+          identifier: GetAccessToVariable
+          spec:
+            key: <+project.identifier><+stepGroup.variables.ReleaseName>_Deployed
+            scope: Stage
+          timeout: 10m
+      - step:
+          type: ShellScript
+          name: AddServToDep
+          identifier: AddServToDep
+          spec:
+            shell: Bash
+            onDelegate: true
+            source:
+              type: Inline
+              spec:
+                script: |
+                  pip3 install requests >/dev/null
+                  pip3 install argparse >/dev/null
+                  read -r -d '' script <<-"EOF"
+                  import requests
+                  import json
+                  import sys
+                  import argparse
+                  import urllib.parse
+                  from requests import get, post, exceptions
+
+                  # Get all command line arguments
+                  full_cmd_arguments=sys.argv
+                  argument_list=full_cmd_arguments[1:]
+                  parser = argparse.ArgumentParser()
+                  parser.add_argument('--account', help='Harness Account Id')
+                  parser.add_argument('--ReleaseName', help='Release name')
+                  parser.add_argument('--OrgId', help='Organisation Id')
+                  parser.add_argument('--ProjId', help='Project Id')
+                  parser.add_argument('--Service', help='Service Id')
+                  parser.add_argument('--EnvId', help='Environment Id')
+                  parser.add_argument('--api_key', help='api')
+                  args = vars(parser.parse_args())
+
+                  account_id = args['account']
+                  api_key = args['api_key']
+                  release = args['ReleaseName'].replace(".","_")
+                  release_name = release + "_Status"
+                  org_id = args['OrgId']
+                  proj_id = args['ProjId']
+                  service = args['Service']
+                  env_id = args['EnvId']
+
+                  #Control that we've the right arguments
+
+                  headers = {
+                      'Content-Type': 'application/json',
+                      'x-api-key': api_key
+                  }
+
+                  # release status if it is the first env update
+                  release_status = {
+                      "env_id":env_id,
+                      "services": [service]
+                  }
+
+                  # release variable if it is the first update and variable creation
+                  value = [release_status]
+                  value = json.dumps(value)
+                  release_variable = {
+                      "variable":{
+                          "identifier":release_name,
+                          "name":release_name,
+                          "description":"Used to manage the deployment status of a release",
+                          "orgIdentifier":org_id,
+                          "projectIdentifier":proj_id,
+                          "type":"String",
+                          "spec": {
+                              "valueType":"FIXED",
+                              "type":"string",
+                              "fixedValue":value
+                          }
+                      }
+                  }
+
+                  #Getting the variable if already exist
+                  url= "https://app.harness.io/ng/api/variables/?accountIdentifier="+account_id+ "&orgIdentifier=" +org_id+"&projectIdentifier="+proj_id+"&searchTerm="+release_name
+                  response = requests.request("GET", url, headers=headers).json()
+                  data = response['data']
+                  items = data['totalItems']
+                  exist = False
+                  i = 0
+                  while i < items:
+                      if data['content'][i]['variable']['name'] == release_name:
+                          release_variable = data['content'][i]
+                          value = json.loads(release_variable['variable']['spec']['fixedValue'])
+                          i = items
+                          exist = True
+                      i += 1
+
+                  # Variable does not already exist
+                  url = "https://app.harness.io/ng/api/variables?accountIdentifier="+account_id
+                  if not exist:
+                      response = requests.request("POST",url,data=json.dumps(release_variable),headers=headers).json()
+                      if response['status'] != "SUCCESS":
+                          print(response['message'])
+                          sys.exit(1)
+                      print("Service " + service + " tag as deployed in environment " + env_id)
+                      sys.exit()
+
+                  # Variable already exist
+                  # Get the environment if deployment already happened for the release in the environment
+                  i = 0
+                  last = len(value)
+                  id_env = last
+                  while i < last:
+                      if value[i]['env_id'] == env_id:
+                          id_env = i
+                          i = last
+                      i += 1
+
+                  # No deployment in the env
+                  if id_env == last:
+                      value.append(release_status)
+                  else:
+                  # Env already had a deployment
+                      try:
+                          i = value[id_env]['services'].index(service)
+                          print("Service " + service + " already tag as deployed in environment " + env_id)
+                          sys.exit()
+                      except ValueError:
+                          value[id_env]['services'].append(service)
+
+                  # Update the variable
+                  release_variable['variable']['spec']['fixedValue'] = json.dumps(value)
+                  response = requests.request("PUT",url,data=json.dumps(release_variable),headers=headers).json()
+                  if response['status'] != "SUCCESS":
+                      print(response['message'])
+                      sys.exit(1)
+
+                  print("Service " + service + " tag as deployed in environment " + env_id)
+
+                  EOF
+
+                  python3 -c "$script" --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG" --ProjId "$PROJ" --Service "$SERVICE" --EnvId "$ENVID" --ReleaseName "$RELEASE"
+            environmentVariables:
+              - name: RELEASE
+                type: String
+                value: <+stepGroup.variables.ReleaseName>
+              - name: API
+                type: String
+                value: <+stepGroup.variables.ApiKey>
+              - name: ORG
+                type: String
+                value: <+org.identifier>
+              - name: PROJ
+                type: String
+                value: <+project.identifier>
+              - name: SERVICE
+                type: String
+                value: <+service.identifier>
+              - name: ENVID
+                type: String
+                value: <+env.identifier>
+              - name: ACCOUNT
+                type: String
+                value: <+account.identifier>
+            outputVariables: []
+          timeout: 10m
+    variables:
+      - name: ReleaseName
+        type: String
+        description: ""
+        required: true
+        value: <+input>
+      - name: ApiKey
+        type: String
+        description: ""
+        required: false
+        value: <+input>.executionInput()
+    delegateSelectors: <+input>
