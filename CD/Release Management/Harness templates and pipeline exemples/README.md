@@ -24,8 +24,22 @@ This template creates an harness string variable at project level and requires t
 
 ## DeleteVariable.yml
 
-This template remoce a variable at the project level and requires the followin inputs:  
+This template remove a variable at the project level and requires the followin inputs:  
 
 **API**: API token to access to the project - mandatory  
 **VARNAME**: Variable name/id to be removed - mandatory  
+
+## MarkAsDeployed.yml
+
+This template add the service identifier of the deployement stage in which it is used to the list of services deployed for a specific release to the environment of the deployment stage. It requires the following inputs:  
+
+**ReleaseName**: The release name for which the service deployed is part of - mandatory  
+**ApiKey**: API token to access to the project - mandatory  
+
+## UncheckService.yml
+
+This template remove the service identifier of the deployement stage in which it is used to the list of services deployed for a specific release to the environment of the deployment stage. It requires the following inputs:  
+
+**RELEASE**: The release name for which the service removed was part of - mandatory  
+**API**: API token to access to the project - mandatory  
 

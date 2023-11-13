@@ -185,6 +185,6 @@ template:
       - name: ApiKey
         type: String
         description: ""
-        required: false
+        required: true
         value: <+input>.executionInput()
     delegateSelectors: <+input>

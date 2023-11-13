@@ -1,0 +1,154 @@
+template:
+  name: UncheckService
+  type: StepGroup
+  orgIdentifier: <your organiosation identifier>
+  spec:
+    steps:
+      - step:
+          type: Queue
+          name: Exclusive
+          identifier: Exclusive
+          spec:
+            key: <+stepGroup.variables.RELEASE>_<+project.identifier>
+            scope: Stage
+          timeout: 10m
+      - step:
+          type: ShellScript
+          name: Uncheck
+          identifier: Uncheck
+          spec:
+            shell: Bash
+            onDelegate: true
+            source:
+              type: Inline
+              spec:
+                script: |-
+                  pip3 install requests >/dev/null
+                  pip3 install argparse >/dev/null
+                  read -r -d '' script <<-"EOF"
+                  import requests
+                  import json
+                  import sys
+                  import argparse
+                  import urllib.parse
+                  from requests import get, post, exceptions
+
+                  # Get all command line arguments
+                  full_cmd_arguments=sys.argv
+                  argument_list=full_cmd_arguments[1:]
+                  parser = argparse.ArgumentParser()
+                  parser.add_argument('--account', help='Harness Account Id')
+                  parser.add_argument('--ReleaseName', help='Release name')
+                  parser.add_argument('--OrgId', help='Organisation Id')
+                  parser.add_argument('--ProjId', help='Project Id')
+                  parser.add_argument('--Service', help='Service Id')
+                  parser.add_argument('--EnvId', help='Environment Id')
+                  parser.add_argument('--api_key', help='api')
+                  args = vars(parser.parse_args())
+
+                  account_id = args['account']
+                  api_key = args['api_key']
+                  release = args['ReleaseName'].replace(".","_")
+                  release_name = release + "_Status"
+                  org_id = args['OrgId']
+                  proj_id = args['ProjId']
+                  service = args['Service']
+                  env_id = args['EnvId']
+
+                  #Control that we've the right arguments
+
+                  headers = {
+                      'Content-Type': 'application/json',
+                      'x-api-key': api_key
+                  }
+
+                  #Getting the variable if already exist and exit if not
+                  url= "https://app.harness.io/ng/api/variables/?accountIdentifier="+account_id+ "&orgIdentifier=" +org_id+"&projectIdentifier="+proj_id+"&searchTerm="+release_name
+                  response = requests.request("GET", url, headers=headers).json()
+                  data = response['data']
+                  items = data['totalItems']
+                  exist = False
+                  i = 0
+                  while i < items:
+                      if data['content'][i]['variable']['name'] == release_name:
+                          release_variable = data['content'][i]
+                          value = json.loads(release_variable['variable']['spec']['fixedValue'])
+                          i = items
+                          exist = True
+                      i += 1
+                  if not exist:
+                      print("Service " + service + " has not been tagged as deployed in environment " + env_id + " for release " + release)
+                      sys.exit()
+
+                  # the variable exit
+                  # Get the environment if deployment already happened for the release in the environment
+                  i = 0
+                  last = len(value)
+                  id_env = last
+                  while i < last:
+                      if value[i]['env_id'] == env_id:
+                          id_env = i
+                          i = last
+                      i += 1
+
+                  # No deployment in the env
+                  if id_env == last:
+                      print("Service " + service + " has not been tagged as deployed in environment " + env_id + " for release " + release)
+                      sys.exit()
+
+                  # Env already had a deployment
+                  try:
+                      i = value[id_env]['services'].index(service)
+                      value[id_env]['services'].pop(i)
+                      release_variable['variable']['spec']['fixedValue'] = json.dumps(value)
+                      response = requests.request("PUT",url,data=json.dumps(release_variable),headers=headers).json()
+                      if response['status'] != "SUCCESS":
+                          print(response['message'])
+                          sys.exit(1)
+                      print("Service " + service + " untag as deployed in environment " + env_id + " for release " + release)
+                  except ValueError:
+                      print("Service " + service + " has not been tagged as deployed in environment " + env_id + " for release " + release)
+
+                  EOF
+
+                  python3 -c "$script" --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG" --ProjId "$PROJ" --Service "$SERVICE" --EnvId "$ENVID" --ReleaseName "$RELEASE"
+            environmentVariables:
+              - name: ACCOUNT
+                type: String
+                value: <+account.identifier>
+              - name: API
+                type: String
+                value: <+stepGroup.variables.API>
+              - name: ORG
+                type: String
+                value: <+org.identifier>
+              - name: PROJ
+                type: String
+                value: <+project.identifier>
+              - name: SERVICE
+                type: String
+                value: <+service.identifier>
+              - name: ENVID
+                type: String
+                value: <+env.identifier>
+              - name: RELEASE
+                type: String
+                value: <+stepGroup.variables.RELEASE>
+            outputVariables: []
+            delegateSelectors: <+input>
+          timeout: 10m
+    stageType: Deployment
+    variables:
+      - name: RELEASE
+        type: String
+        value: <+input>.executionInput()
+        description: ""
+        required: false
+      - name: API
+        type: String
+        value: <+input>.executionInput()
+        description: ""
+        required: true
+  identifier: UncheckService
+  versionLabel: V1
+  icon: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAbNJREFUWIXtVkFSgzAULVBgYUuL0AClBFs3VbeOHkevoGtv4EIPoKPewOrK8QK611UdvYE4ti50o8nYKLal+YF2upA/8zcZkveS9/JIoZBXXpzSVHXFReiiicP+crj0mbbpfLoOXU8EfK0Z4JcswCNEAhypqtrmgkuStBDU/ftpgrN2a6jDJYAs+3QW4EyOieDlUml7VuCsJ+rewuHbXAhAdSdGeqaOxr7fjY8T4h8ecq5817tJRQCiO/Ybj4qiOIMpxZplHzNSuqZvsLUqhrEjRACqu1mp7g1NlW1z8UDXtPWhcWVSdgzrvgrV3TLN/UQDxVnJcpms+Q4iQPTsgK9QgHtjdjuCj2z7DCyBaMx+651IQma+mCMB60iIAI1GAfBXkAScG/Xna/qHagFPYSYmpJXxGh6OOZUi+BqyIsd2wiMQ+o0nFkQSAUG/QRTpur7J1qoaxi5YAlaDKL4D+CDyELokqfgQH6dRXHec64br3QqZMF40lLK+fiCdSGDgh625EoD6IW03Me5xCUD9kKZJ7pxzCfz4gRhuqruHPkpjJNo0KcmxZXyW4z7duRB4Xv+ivgC4V8PSvjKFYQAAAABJRU5ErkJggg==
