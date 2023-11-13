@@ -8,7 +8,7 @@ This has been done to answer to the following constraints when a release is depl
 - if the release of an application, A, is dependant of another application, B (with specidfic release), then for A can be ready for deployment in production, B has to be already in production
 - When an application release is ready to be deployed in production, a Jira ticket has to be opened and its approval will automatically launch the deployment in production
 
-This can be illustrated with the following pipeline:  
+This can be illustrated with the following pipeline ([Harness templates and pipeline exemples](Harness%20templates%20and%20pipeline%20exemples "All resources to create ARM sync in Harness.io" )):  
 ![CD pipeline](pipeline.png "CD pipeline")  
 
 With deployment stage beeing like:  
