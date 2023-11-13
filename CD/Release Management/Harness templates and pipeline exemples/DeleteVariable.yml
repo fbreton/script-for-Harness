@@ -1,0 +1,95 @@
+template:
+  name: DeleteVariable
+  identifier: DeleteVariable
+  versionLabel: V1
+  type: Step
+  orgIdentifier: <your organisation identifier>
+  tags: {}
+  icon: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJpY29uIGljb24tdGFibGVyIGljb24tdGFibGVyLXZhcmlhYmxlLW9mZiIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgPHBhdGggc3Ryb2tlPSJub25lIiBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+CiAgPHBhdGggZD0iTTQuNjc1IDQuNjhjLTIuMTcgNC43NzYgLTIuMDYyIDkuNTkyIC4zMjUgMTUuMzIiIC8+CiAgPHBhdGggZD0iTTE5IDRjMS45NTkgMy45MTcgMi4zODMgNy44MzQgMS4yNzIgMTIuMjMybS0uOTgzIDMuMDUxYy0uMDkzIC4yMzggLS4xODkgLjQ3NyAtLjI4OSAuNzE3IiAvPgogIDxwYXRoIGQ9Ik0xMS42OTYgMTEuNjk2Yy4wOTUgLjI1NyAuMiAuNTMzIC4zMiAuODMxYy45ODQgMi40NzMgLjk4NCAzLjQ3MyAxLjk4NCAzLjQ3M2gxIiAvPgogIDxwYXRoIGQ9Ik04IDE2YzEuNSAwIDMgLTIgNCAtMy41bTIuMDIyIC0yLjUxNGMuNjI5IC0uNTgyIDEuMzA0IC0uOTg2IDEuOTc4IC0uOTg2IiAvPgogIDxwYXRoIGQ9Ik0zIDNsMTggMTgiIC8+Cjwvc3ZnPgoKCg==
+  spec:
+    timeout: 10m
+    type: ShellScript
+    spec:
+      shell: Bash
+      onDelegate: true
+      source:
+        type: Inline
+        spec:
+          script: |-
+            pip3 install requests >/dev/null
+            pip3 install argparse >/dev/null
+            read -r -d '' script <<-"EOF"
+            import requests
+            import json
+            import sys
+            import argparse
+            import urllib.parse
+            from requests import get, post, exceptions
+
+            # Get all command line arguments
+            full_cmd_arguments=sys.argv
+            argument_list=full_cmd_arguments[1:]
+            parser = argparse.ArgumentParser()
+            parser.add_argument('--account', help='Harness Account Id')
+            parser.add_argument('--OrgId', help='Organisation Id')
+            parser.add_argument('--ProjId', help='Project Id')
+            parser.add_argument('--api_key', help='api')
+            parser.add_argument('--Name',help="Variable Name")
+
+            args = vars(parser.parse_args())
+
+            account_id = args['account']
+            api_key = args['api_key']
+            org_id = args['OrgId']
+            proj_id = args['ProjId']
+            var_name = args['Name']
+
+
+            #Control that we've the right arguments
+            if (proj_id != "") and (org_id == ""):
+                print("When project id is defined, organisation id has to be provided")
+                sys.exit(1)
+
+            headers = {
+                'Content-Type': 'application/json',
+                'x-api-key': api_key
+            }
+
+            #Url part if org_id and or proj_id are defined
+            url_add = ""
+            if org_id != "":
+                url_add = "&orgIdentifier=" + org_id
+                if proj_id != "":
+                    url_add = url_add + "&projectIdentifier=" + proj_id
+
+            #Delete the variable
+            url = "https://app.harness.io/ng/api/variables/" + var_name + "?accountIdentifier=" + account_id + url_add
+            response = requests.request("DELETE",url,headers=headers).json()
+
+            #If error, provide error message
+            if response['status'] != "SUCCESS":
+                print(response['message'])
+                sys.exit(1)
+
+            EOF
+
+            python3 -u -c "$script" --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG" --ProjId "$PROJ" --Name "$VARNAME"
+      environmentVariables:
+        - name: ACCOUNT
+          type: String
+          value: <+account.identifier>
+        - name: API
+          type: String
+          value: <+input>
+          required: true
+        - name: ORG
+          type: String
+          value: <+org.identifier>
+        - name: PROJ
+          type: String
+          value: <+project.identifier>
+        - name: VARNAME
+          type: String
+          value: <+input>
+          required: true
+      outputVariables: []
