@@ -1,0 +1,58 @@
+template:
+  name: ResetTicket
+  identifier: ResetTicket
+  versionLabel: V1
+  type: Stage
+  orgIdentifier: <your organisation identifier>
+  tags: {}
+  icon: data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHdpZHRoPSI1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0ibTM1MS44NTk3OTQgNDIuNjY2NjY2N3Y0Mi42NjY2NjY2bC02OC42NjU5MzktLjAwMjk0OGMzNi4wNzc0MzMgMzEuNjU4MTQzNyA1OC4xODgwMiA3Ny45OTA5Njk3IDU4LjE0NjAzMSAxMjguNDczNDY1Ny0uMDY1MTQ2IDc4LjE3OTA5OS01My4yNDE3MDMgMTQ2LjMxNzY4OC0xMjkuMDYyMjk1IDE2NS4zNzU4NTNzLTE1NC44OTU3NzkzLTE1LjgzNzc5Ny0xOTEuOTE5NTQwMy04NC42OTQyOTNjLTM3LjAyMzc2MS02OC44NTY0OTUtMjIuNTI4MDg3NjgtMTU0LjA2NDk5OCAzNS4xODE3NDM2LTIwNi44MDU0MTEgOC4xNTMzOTY2IDEyLjk3MjIyNyAxOS42NDkwNzE1IDIzLjUwOTkyOSAzMy4yOCAzMC41MDY2NjctMjkuMzE5OTI5NSAyMy42ODY4ODYtNDYuMzQwMDE2IDU5LjM3NDE2NS00Ni4yOTMzMzM0IDk3LjA2NjY2NiAxLjA0OTI0MDMgNjkuOTQxNTEgNTguMDUwNjIxMSAxMjYuMDg3ODcgMTI4LjAwMDAwMDEgMTI2LjA4IDY0LjA3MTcxMyAxLjA1NTM4NSAxMTguNzA4NjUyLTQ2LjE5NTEwNiAxMjYuOTA1NjM5LTEwOS43NDkwOCA2LjEyNDE4Ny00Ny40ODI4Ni0xNS4xMzUwOTMtOTIuNzQwNDAzLTUyLjIzNjUwNC0xMTguOTQ3MTdsLS4wMDI0NjggNzkuMzYyOTE3aC00Mi42NjY2Njd2LTE0OS4zMzMzMzMzem0tMjI0LTQyLjY2NjY2NjdjMjMuNTY0MTUgMCA0Mi42NjY2NjcgMTkuMTAyNTE3MyA0Mi42NjY2NjcgNDIuNjY2NjY2NyAwIDIzLjU2NDE0OTMtMTkuMTAyNTE3IDQyLjY2NjY2NjYtNDIuNjY2NjY3IDQyLjY2NjY2NjYtMjMuNTY0MTQ5IDAtNDIuNjY2NjY2NC0xOS4xMDI1MTczLTQyLjY2NjY2NjQtNDIuNjY2NjY2NiAwLTIzLjU2NDE0OTQgMTkuMTAyNTE3NC00Mi42NjY2NjY3IDQyLjY2NjY2NjQtNDIuNjY2NjY2N3oiIGZpbGwtcnVsZT0iZXZlbm9kZCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNzQuODA2ODcyIDY0KSIvPjwvc3ZnPg==
+  spec:
+    type: Custom
+    spec:
+      execution:
+        steps:
+          - step:
+              type: Queue
+              name: Queue
+              identifier: Queue
+              spec:
+                key: <+project.identifier><+stage.variables.RELEASE>_Ticket
+                scope: Stage
+              timeout: 10m
+          - stepGroup:
+              name: group
+              identifier: group
+              steps:
+                - step:
+                    name: DeleteVariable
+                    identifier: DeleteVariable
+                    template:
+                      templateRef: org.DeleteVariable
+                      versionLabel: V1
+                      templateInputs:
+                        type: ShellScript
+                        spec:
+                          environmentVariables:
+                            - name: API
+                              type: String
+                              value: <+stage.variables.API>
+                            - name: VARNAME
+                              type: String
+                              value: <+stage.variables.RELEASE>_Ticket
+              when:
+                stageStatus: Success
+                condition: "\"<+variable.<+stage.variables.RELEASE>_Ticket>\" != \"variable.<+stage.variables.RELEASE>_Ticket\""
+    variables:
+      - name: API
+        type: String
+        description: ""
+        required: true
+        value: <+input>
+      - name: RELEASE
+        type: String
+        description: ""
+        required: true
+        value: <+input>
+    delegateSelectors: <+input>
+    when:
+      pipelineStatus: Success

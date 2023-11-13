@@ -1,0 +1,142 @@
+template:
+  name: ReleaseReady
+  type: Stage
+  orgIdentifier: <your organisation id>
+  spec:
+    type: Approval
+    spec:
+      execution:
+        steps:
+          - step:
+              name: WaitRelease
+              identifier: WaitRelease
+              template:
+                templateRef: org.WaitReleaseReady
+                versionLabel: V1
+                templateInputs:
+                  type: CustomApproval
+                  timeout: <+input>
+                  spec:
+                    retryInterval: <+input>
+                    environmentVariables:
+                      - name: RELEASE
+                        type: String
+                        value: <+pipeline.variables.ReleaseName>
+                      - name: API
+                        type: String
+                        value: <+pipeline.variables.api_key>
+                      - name: FROMENVID
+                        type: String
+                        value: <+stage.variables.FromEnv>
+                      - name: TOENVID
+                        type: String
+                        value: <+stage.variables.ToEnv>
+                    delegateSelectors:
+                      - ""
+          - step:
+              type: Queue
+              name: LockTicketCreation
+              identifier: LockTicketCreation
+              spec:
+                key: <+project.identifier><+pipeline.variables.ReleaseName>_releaseready
+                scope: Stage
+              timeout: 6m
+          - stepGroup:
+              name: CreateTicket
+              identifier: CreateTicket
+              steps:
+                - step:
+                    type: JiraCreate
+                    name: JiraCreate
+                    identifier: JiraCreate
+                    spec:
+                      connectorRef: <+input>
+                      projectKey: <+input>
+                      issueType: Task
+                      fields:
+                        - name: Description
+                          value: Waiting approval to be automatically deploy in Production
+                        - name: Summary
+                          value: Application <+project.identifier> ready to go to <+stage.variables.ToEnv>
+                    timeout: 10m
+                - step:
+                    name: SaveTicketID
+                    identifier: SaveTicketID
+                    template:
+                      templateRef: org.CreateVariable
+                      versionLabel: V1
+                      templateInputs:
+                        type: ShellScript
+                        spec:
+                          environmentVariables:
+                            - name: API
+                              type: String
+                              value: <+pipeline.variables.api_key>
+                            - name: VARNAME
+                              type: String
+                              value: <+stage.variables.ReleaseName>_Ticket
+                            - name: VARVALUE
+                              type: String
+                              value: <+stage.spec.execution.steps.CreateTicket.steps.JiraCreate.issue.key>
+                            - name: VARDESC
+                              type: String
+                              value: Jira ticket number for approving release
+              when:
+                stageStatus: Success
+                condition: ("<+variable.<+stage.variables.ReleaseName>_Ticket>" == "variable.<+stage.variables.ReleaseName>_Ticket") and ("<+stage.variables.CreateTicket>" == "YES")
+          - step:
+              type: ShellScript
+              name: TicketID
+              identifier: TicketID
+              spec:
+                shell: Bash
+                onDelegate: true
+                source:
+                  type: Inline
+                  spec:
+                    script: TICKET="<+variable.<+stage.variables.ReleaseName>_Ticket>"
+                environmentVariables: []
+                outputVariables:
+                  - name: ticketId
+                    type: String
+                    value: TICKET
+              timeout: 10m
+              when:
+                stageStatus: Success
+                condition: "\"<+stage.variables.CreateTicket>\" == \"YES\""
+    failureStrategies:
+      - onFailure:
+          errors:
+            - AllErrors
+          action:
+            type: MarkAsFailure
+    variables:
+      - name: ReleaseName
+        type: String
+        description: ""
+        required: true
+        value: <+input>
+      - name: CreateTicket
+        type: String
+        description: ""
+        required: false
+        value: <+input>.default(NO).allowedValues(YES,NO)
+      - name: api_key
+        type: String
+        description: ""
+        required: true
+        value: <+input>
+      - name: FromEnv
+        type: String
+        description: ""
+        required: true
+        value: <+input>
+      - name: ToEnv
+        type: String
+        description: ""
+        required: true
+        value: <+input>
+    delegateSelectors: <+input>
+  identifier: ReleaseReady
+  versionLabel: V1
+  icon: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAXlJREFUWIXtl79KA0EQhwcJKoiksBZsFGy0sYmNpZWlT2Bn5RvYWCqx8A0sUwliIwhiI76ECILg32iUS6K5+BtmlluXu9M7N1foDXyQ28vNfJfdy84R5YsRUAd34BbsgOGcuXLFHug77BZVfAi8atGewp+ffRY5Bd0YWiQ/f1+PZ8As+NCxCggsMZuzLAKcJCSZX5trS6ADJsEUeLcErsCNQ09zZhJ4SDg3StG8B4o5riRc8/gbAZ7zc5K7NLgL0GB/59CXQDWlYBptnwKtHNz7EvARpUApUAqUAoUJTINtkv2jcIF5kq2X94HNogUWtQgXvwATgxJYAePO2DJFLdpJzHlvAmsknQ23a2M6tkrSGXHxA5JmJS68CMzpGBc7BusU9YL7lNwNeRPgWABN+tp4cIvurvqBCXDUSBoOLr71w3zen4IlsJEh3//5J/xbAqFe+ESy8hl+/3shefZN/29e2zpKWwkswqwCR+DNSpZG8xv4Bi5BI67QJ5/cBGcXq6NLAAAAAElFTkSuQmCC

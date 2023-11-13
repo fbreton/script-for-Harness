@@ -10,6 +10,8 @@ This has been done to answer to the following constraints when a release is depl
 
 To ilustrate the usage, you've also 2 pipeline definitions that deploy 2 services, one being dependent of the other, representing an application APP1 that is contained in a project with the same name.
 
+Execution of steps, stages based on those templates need to use delegate that have python installed on them. Python version that has been tested with those templates is 8.11.
+
 # Templates
 
 ## CreateVariable.yaml
@@ -49,4 +51,39 @@ This template is a CustomApproval step template that wait until the dependencies
 
 **RELEASE**: The release name for which the service to be deployed is part of - mandatory  
 **API**: API token to access to the project - mandatory  
+**Timeout**: time to wait before stopping the step in timeout error  
+**Retry interval**: Interval between each execution occurence  
+
+## WaitReleaseReady.yaml
+
+This template is a CustomApproval step template that wait until all the service of a release to have been deployed in a specific environment for it can be deployed in the next environment. In case the release have dependencies with release of other applications, it also wait until those dependencies to be deployed on the next environment. It requieres the following inputs:
+
+**RELEASE**: The release name for which the service to be deployed is part of - mandatory  
+**API**: API token to access to the project - mandatory  
+**FROMENVID**: Environment Id on which the services of the release have to be in deployed status to move to next - mandatory
+**TOENVID**: Environment id targetted as the next environment for deployement in which potential dependencies with other applications have to be already deployed - mandatory
+**Timeout**: time to wait before stopping the step in timeout error  
+**Retry interval**: Interval between each execution occurence  
+
+## ReleaseReady.yaml
+
+This template is a stage approval template that contain the WaitReleaseReady.yaml step and on top of it add the creation of a Jira ticket indicated that the release is ready to be deployed on the next environment allowing to wait for Jira approval of this ticket to move ahead. It requires the following inputs:
+
+**ReleaseName**: The release name for which the service to be deployed is part of - mandatory  
+**api_key**: API token to access to the project - mandatory  
+**CreateTicket**: YES or NO values to know if a Jira ticket has to be created - mandatory  
+**FromEnv**: Environment Id on which the services of the release have to be in deployed status to move to next - mandatory  
+**ToEnv**: Environment id targetted as the next environment for deployement in which potential dependencies with other applications have to be already deployed - mandatory  
+**Timeout**: time to wait before stopping the step in timeout error  
+**Retry interval**: Interval between each execution occurence  
+
+## ResetTicket.yaml
+
+This template is a custom stage template to remove from the buffer the jira ticket that has been created for a release during ReleaseReady stage. It requieres the following inputs:  
+
+**RELEASE**: The release name for which the buffer has to be cleaned - mandatory  
+**API**: API token to access to the project - mandatory  
+
+
+
 
