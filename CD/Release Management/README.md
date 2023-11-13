@@ -52,7 +52,7 @@ python3 DeleteVariable.py --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG" -
 
 ## AddServiceToReleaseEnv.py
 
-This script creates or updates a variable with an identifier that is the <ReleaseName>_Status for which we want to update the deployed components (services) for a specific environment. The goal is to be able to follow the deployment status of a release. For exemple if 2 services, serv1 and serv2, has been deployed to QA, UAT and PROD environments for release V1 of application (poject) APP1, then variable V1_Status should have been created and updated in project APP1 containing:  
+This script creates or updates a variable with an identifier that is the *ReleaseName*_Status for which we want to update the deployed components (services) for a specific environment. The goal is to be able to follow the deployment status of a release. For exemple if 2 services, serv1 and serv2, has been deployed to QA, UAT and PROD environments for release V1 of application (poject) APP1, then variable V1_Status should have been created and updated in project APP1 containing:  
 ```
 [
     {"env_id": "QA", 
@@ -78,7 +78,7 @@ python3 AddServiceToReleaseEnv.py --account "$ACCOUNT" --api_key "$API" --OrgId 
 
 ## DelServiceFromReleaseEnv.py
 
-This script updates a variable with an identifier that is the <ReleaseName>_Status for which we want to update the deployed components (services) for a specific environment, removing a component that has been uninstalled. The goal is to be able to follow the deployment status of a release.  
+This script updates a variable with an identifier that is the *ReleaseName*_Status for which we want to update the deployed components (services) for a specific environment, removing a component that has been uninstalled. The goal is to be able to follow the deployment status of a release.  
 
 Command to launch the script from a shell ( with the right value in the variables):
 ```
@@ -91,3 +91,63 @@ python3 DelServiceFromReleaseEnv.py --account "$ACCOUNT" --api_key "$API" --OrgI
 **Service**: The service identifier that has been uninstalled  
 **EnvId**: The environment identifier in which the service was uninstalled  
 **RleaseName**: The release name associated with the deployment  
+
+## WaitDependencies.py
+
+This script is outputing the list of dependencies that have not been deployed for a specific services in a specific environment and if there's none then the output is "Done". The format of the dependencies input is json format as the following:  
+
+'''
+[
+    {"appId": "name of app 1",
+     "ReleaseName": "release name 1",
+     "services": [ service dep 1, ..., service dep n]},
+     ...,
+    {"appId": "name of app n",
+     "ReleaseName": "release name n",
+     "services": [ service dep 1, ..., service dep n]}
+]
+'''
+
+Command to launch the script from a shell ( with the right value in the variables):  
+```
+python3 WaitDependencies.py --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG" --Service "$SERVICE" --EnvId "$ENVID" --ReleaseName "$RELEASE" --dependencies "$DEP"
+```
+**account**: Harness account id  
+**api_key**: Harness api key allowing to access to the targeted project with the needed rights  
+**OrgId**: Organisation identifier  
+**Service**: The service identifier that has to be installed 
+**EnvId**: The environment identifier in which the service has to be installed  
+**RleaseName**: The release name associated with the deployment  
+**dependencies**: the dependencies to check  
+
+## WaitForReadiness.py
+
+This script is checking if all the services of an application have been deployed to an environment (initial env) before they can be deployed to the next one. In case of dependencies with other applications, it check if those dependencies are deployed or not. The output is the list of the services not already deployed in the initial environment and/or the missing dependencies from other applications, if there's none then the output is "Done". The file format to describe what is requiered for an application release to be ready before deployment is the following jason format:  
+
+```
+[
+    {"appId": "name of app to be deployed",
+     "services": [ service 1 of the app, ..., service n of the app]},
+    {"appId": "name of app 1 containing dep",
+     "ReleaseName": "release name 1",
+     "services": [ service dep 1, ..., service dep n]},
+     ...,
+    {"appId": "name of app n containing dep",
+     "ReleaseName": "release name n",
+     "services": [ service dep 1, ..., service dep n]}
+]
+```
+
+Command to launch the script from a shell ( with the right value in the variables):  
+```
+python3 WaitForReadiness.py --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG" --ProjId "$PROJ" --FromEnvId "$FROMENV" --ToEnvId "$TOENV" --ReleaseName "$RELEASE" --AvailFile "$AVAILFILE"
+```
+
+**account**: Harness account id  
+**api_key**: Harness api key allowing to access to the targeted project with the needed rights  
+**OrgId**: Organisation identifier  
+**ProjId**: Project identifier  
+**FromEnId**: The environment id in which the full application has to be deployed before it can be deployed in the next environment (ToEnvId)
+**ToEnvId**: The environment identifier in which the application has to be deployed 
+**RleaseName**: The release name associated with the deployment  
+**AvailFile**: The full path of the file in the harness project file store that contain application requierments  
