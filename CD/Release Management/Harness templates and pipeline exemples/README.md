@@ -61,7 +61,7 @@ This template is a CustomApproval step template that wait until all the service 
 **RELEASE**: The release name for which the service to be deployed is part of - mandatory  
 **API**: API token to access to the project - mandatory  
 **FROMENVID**: Environment Id on which the services of the release have to be in deployed status to move to next - mandatory  
-**TOENVID**: Environment id targetted as the next environment for deployement in which potential dependencies with other applications have to be already deployed - mandatory
+**TOENVID**: Environment id targetted as the next environment for deployement in which potential dependencies with other applications have to be already deployed - mandatory  
 **Timeout**: time to wait before stopping the step in timeout error  
 **Retry interval**: Interval between each execution occurence  
 
