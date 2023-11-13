@@ -84,6 +84,8 @@ This template is a custom stage template to remove from the buffer the jira tick
 **RELEASE**: The release name for which the buffer has to be cleaned - mandatory  
 **API**: API token to access to the project - mandatory  
 
+# Usage illustration
+
 
 
 
