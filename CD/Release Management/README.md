@@ -147,7 +147,7 @@ python3 WaitForReadiness.py --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG"
 **api_key**: Harness api key allowing to access to the targeted project with the needed rights  
 **OrgId**: Organisation identifier  
 **ProjId**: Project identifier  
-**FromEnId**: The environment id in which the full application has to be deployed before it can be deployed in the next environment (ToEnvId)
-**ToEnvId**: The environment identifier in which the application has to be deployed 
-**RleaseName**: The release name associated with the deployment  
+**FromEnId**: The environment id in which the full application has to be deployed before it can be deployed in the next environment (ToEnvId)  
+**ToEnvId**: The environment identifier in which the application has to be deployed  
+**RleaseName**: The release name associated with the deployment    
 **AvailFile**: The full path of the file in the harness project file store that contain application requierments  
