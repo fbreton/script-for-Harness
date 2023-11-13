@@ -1,0 +1,110 @@
+template:
+  name: CreateVariable
+  identifier: CreateVariable
+  versionLabel: V1
+  type: Step
+  orgIdentifier: SE_Sandbox
+  tags: {}
+  icon: data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSJjdXJyZW50Q29sb3IiPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMiA1aDJWNEgxLjVsLS41LjV2OGwuNS41SDR2LTFIMlY1em0xMi41LTFIMTJ2MWgydjdoLTJ2MWgyLjVsLjUtLjV2LThsLS41LS41em0tMi43NCAyLjU3TDEyIDd2Mi41MWwtLjMuNDUtNC41IDJoLS40NmwtMi41LTEuNS0uMjQtLjQzdi0yLjVsLjMtLjQ2IDQuNS0yaC40NmwyLjUgMS41ek01IDkuNzFsMS41LjlWOS4yOEw1IDguMzh2MS4zM3ptLjU4LTIuMTVsMS40NS44NyAzLjM5LTEuNS0xLjQ1LS44Ny0zLjM5IDEuNXptMS45NSAzLjE3bDMuNS0xLjU2di0xLjRsLTMuNSAxLjU1djEuNDF6Ii8+PC9zdmc+
+  spec:
+    timeout: 10m
+    type: ShellScript
+    spec:
+      shell: Bash
+      onDelegate: true
+      source:
+        type: Inline
+        spec:
+          script: |-
+            pip3 install requests >/dev/null
+            pip3 install argparse >/dev/null
+            read -r -d '' script <<-"EOF"
+            import requests
+            import json
+            import sys
+            import argparse
+            import urllib.parse
+            from requests import get, post, exceptions
+
+            # Get all command line arguments
+            full_cmd_arguments=sys.argv
+            argument_list=full_cmd_arguments[1:]
+            parser = argparse.ArgumentParser()
+            parser.add_argument('--account', help='Harness Account Id')
+            parser.add_argument('--OrgId', help='Organisation Id')
+            parser.add_argument('--ProjId', help='Project Id')
+            parser.add_argument('--api_key', help='api')
+            parser.add_argument('--Name',help="Variable Name")
+            parser.add_argument('--Value',help="Variable Value")
+            parser.add_argument('--desc',help="Variable Description")
+
+            args = vars(parser.parse_args())
+
+            account_id = args['account']
+            api_key = args['api_key']
+            org_id = args['OrgId']
+            proj_id = args['ProjId']
+            var_name = args['Name']
+            var_value = args['Value']
+            var_desc = args['desc']
+
+
+            #Control that we've the right arguments
+
+            headers = {
+                'Content-Type': 'application/json',
+                'x-api-key': api_key
+            }
+
+            variable = {
+                "variable":{
+                    "identifier":var_name,
+                    "name":var_name,
+                    "description":var_desc,
+                    "orgIdentifier":org_id,
+                    "projectIdentifier":proj_id,
+                    "type":"String",
+                    "spec": {
+                        "valueType":"FIXED",
+                        "type":"string",
+                        "fixedValue":var_value
+                    }
+                }
+            }
+
+            #Adding the vriable
+            url = "https://app.harness.io/ng/api/variables?accountIdentifier=" + account_id
+            response = requests.request("POST",url,data=json.dumps(variable),headers=headers).json()
+
+            #If error, provide error message
+            if response['status'] != "SUCCESS":
+                print(response['message'])
+                sys.exit(1)
+
+            EOF
+
+            python3 -u -c "$script" --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG" --ProjId "$PROJ" --Name "$VARNAME" --Value "$VARVALUE" --desc "$VARDESC"
+      environmentVariables:
+        - name: ACCOUNT
+          type: String
+          value: <+account.identifier>
+        - name: API
+          type: String
+          value: <+input>.executionInput()
+        - name: ORG
+          type: String
+          value: <+org.identifier>
+        - name: PROJ
+          type: String
+          value: <+project.identifier>
+        - name: VARNAME
+          type: String
+          value: <+input>.executionInput()
+        - name: VARVALUE
+          type: String
+          value: <+input>.executionInput()
+        - name: VARDESC
+          type: String
+          value: <+input>
+      outputVariables: []
+
