@@ -1,6 +1,6 @@
 # Description
 
-The [Harness.io](https://www.harness.io/products/continuous-delivery "World's Most Advanced CD Platform") template you'll find here have been created to be used in a context of release management to manage service deployment dependencies when those services that are part of a same release are deployed by independant pipelines.  
+The [Harness.io](https://www.harness.io/products/continuous-delivery "World's Most Advanced CD Platform") templates you'll find here have been created to be used in a context of release management to manage service deployment dependencies when those services that are part of a same release are deployed by independant pipelines.  
 
 This has been done to answer to the following constraints when a release is deployed accross different environments:
 - All dependencies of a service must be deployed before it can be deployed in an environment,
@@ -104,3 +104,19 @@ In each services is created a Config File with id *dependencies* with the name v
 **productcatalog**:  
   Config file identifier: dependencies  
   File/Folde Path: /<+pipeline.variables.ReleaseName>_productcatalog.json  
+
+  In my exemple, the 2 services will be deployed on a kubernetes clusters and for clarity I created a pipeline for each service when it is possible to have only one pipeline with the service to deploy as input. Both pipeline are the same exepted regarding the service they're deploying. They're composed of the following stages:  
+
+  - **deploy QA**: deploy the service to QA environment  
+  - **Ready for UAT**: Harness manual approval before going to UAT environment (with 1 minute timeout for auto approval)  
+  - **deploy UAT**: deploy the service to UAT environment  
+  - **WaitRelease**: Wait for all the services of the APP2 release to have been deployed in UAT, and potential dependencies to other application to be on PROD before it can be possible to move to PROD and open a Jira ticket requesting to move to PROD.
+  - **OkToGoToPRD**: waiting for the Jira ticket approval  
+  - **Deploy to PROD**: deploy the service to PROD environment  
+  - **CleanCache**: clean the cache used to manage the Jira ticket accross various pipeline.
+
+  ![CD pipeline](../pipeline.png "CD pipeline")  
+
+
+
+
