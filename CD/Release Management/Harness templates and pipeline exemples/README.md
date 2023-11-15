@@ -8,7 +8,7 @@ This has been done to answer to the following constraints when a release is depl
 - if the release of an application, A, is dependant of another application, B (with specidfic release), then for A can be ready for deployment in production, B has to be already in production
 - When an application release is ready to be deployed in production, a Jira ticket has to be opened and its approval will automatically launch the deployment in production
 
-To [illustrate the usage](#usage-illustration), you've also 2 pipeline definitions that deploy 2 services, one being dependent of the other, representing an application APP1 that is contained in a project with the same name.
+To [illustrate the usage](#usage-illustration), you've also 2 pipeline definitions that deploy 2 services, one being dependent of the other, representing an application APP2 that is contained in a project with the same name.
 
 Execution of steps, stages based on those templates need to use delegate that have python installed on them. Python version that has been tested with those templates is 3.11.
 
@@ -86,6 +86,21 @@ This template is a custom stage template to remove from the buffer the jira tick
 
 # Usage illustration
 
+To illustrate the usage, let's take a simple application that we'll name APP2 and that is composed of 2 services for its first Release that we'll name V1:  
+1. recommendation  
+2. productcatalog  
 
+Service recommendation is dependant of service productcatalog which means that productcatalog has to be deployed before recommendation can be deployed. Then to specify our application for release V1, we need to have 3 config files in the File store of APP2:  
+- V1_recommendation.json that contains the dependency definition for service recommendation (can also be located in a git repo)
+- V1_productcatalog.json that contains the dependency definition for service productcatalog (can also be located in a git repo)
+- V1_ReleaseAvailability.json that contains the definition of all needed services for the release to be available
 
+In each services is created a Config File with id *dependencies* with the name variabalized with the release name. Then the service definition doesn't need to be change for each release. To do so, in our exemple, each pipeline that will be used to deployed our APP2 services will have a variable named *RemeaseName*. In our exemple the 2 APP2 services have a config files that is defined as follow:  
 
+**recommendation**:  
+  Config file identifier: dependencies  
+  File/Folde Path: /<+pipeline.variables.ReleaseName>_recommendation.json  
+
+**productcatalog**:  
+  Config file identifier: dependencies  
+  File/Folde Path: /<+pipeline.variables.ReleaseName>_productcatalog.json  
