@@ -1,0 +1,356 @@
+pipeline:
+  orgIdentifier: <your organisation>
+  stages:
+    - stage:
+        name: deploy QA
+        identifier: deploy_QA
+        description: ""
+        type: Deployment
+        spec:
+          deploymentType: Kubernetes
+          service:
+            serviceRef: productcatalog
+            serviceInputs:
+              serviceDefinition:
+                type: Kubernetes
+                spec:
+                  artifacts:
+                    primary:
+                      primaryArtifactRef: <+input>
+                      sources: <+input>
+          environment:
+            environmentRef: QA
+            deployToAll: false
+            infrastructureDefinitions:
+              - identifier: qa_K8s
+          execution:
+            steps:
+              - step:
+                  name: WaitForDep
+                  identifier: WaitForDep
+                  template:
+                    templateRef: org.WaitDependencies
+                    versionLabel: V1
+                    templateInputs:
+                      type: CustomApproval
+                      spec:
+                        retryInterval: 1m
+                        environmentVariables:
+                          - name: RELEASE
+                            type: String
+                            value: <+pipeline.variables.ReleaseName>
+                          - name: API
+                            type: String
+                            value: <+pipeline.variables.api_key>
+                      timeout: 1d
+              - step:
+                  type: K8sRollingDeploy
+                  name: K8sRollingDep
+                  identifier: K8sRollingDeploy
+                  spec:
+                    skipDryRun: false
+                    pruningEnabled: false
+                  timeout: 10m
+              - stepGroup:
+                  name: MarkAsDep
+                  identifier: MarkAsDep
+                  template:
+                    templateRef: org.MarkAsDeployed
+                    versionLabel: V1
+                    templateInputs:
+                      variables:
+                        - name: ReleaseName
+                          type: String
+                          value: <+pipeline.variables.ReleaseName>
+                        - name: ApiKey
+                          type: String
+                          value: <+pipeline.variables.api_key>
+                      delegateSelectors:
+                        - devx-demo-gke
+            rollbackSteps: []
+        tags: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: MarkAsFailure
+    - stage:
+        name: Ready for UAT
+        identifier: Ready_for_UAT
+        description: ""
+        type: Approval
+        spec:
+          execution:
+            steps:
+              - step:
+                  name: Validation
+                  identifier: Validation
+                  type: HarnessApproval
+                  timeout: 1m
+                  spec:
+                    approvalMessage: |-
+                      Please review the following information
+                      and approve the pipeline progression
+                    includePipelineExecutionHistory: true
+                    approvers:
+                      minimumCount: 1
+                      disallowPipelineExecutor: false
+                      userGroups:
+                        - _project_all_users
+                    isAutoRejectEnabled: false
+                    approverInputs: []
+                  failureStrategies:
+                    - onFailure:
+                        errors:
+                          - Timeout
+                        action:
+                          type: MarkAsSuccess
+        tags: {}
+    - stage:
+        name: deploy UAT
+        identifier: deploy_UAT
+        description: ""
+        type: Deployment
+        spec:
+          deploymentType: Kubernetes
+          service:
+            useFromStage:
+              stage: deploy_QA
+          environment:
+            environmentRef: UAT
+            deployToAll: false
+            infrastructureDefinitions:
+              - identifier: UAT_K8s
+          execution:
+            steps:
+              - step:
+                  name: WaitForDep
+                  identifier: WaitForDep
+                  template:
+                    templateRef: org.WaitDependencies
+                    versionLabel: V1
+                    templateInputs:
+                      type: CustomApproval
+                      spec:
+                        retryInterval: 1m
+                        environmentVariables:
+                          - name: RELEASE
+                            type: String
+                            value: <+pipeline.variables.ReleaseName>
+                          - name: API
+                            type: String
+                            value: <+pipeline.variables.api_key>
+                      timeout: 1d
+              - step:
+                  type: K8sRollingDeploy
+                  name: K8sRollingDep
+                  identifier: K8sRollingDep
+                  spec:
+                    skipDryRun: false
+                    pruningEnabled: false
+                  timeout: 10m
+              - stepGroup:
+                  name: MarkAsDep
+                  identifier: MarkAsDeployed
+                  template:
+                    templateRef: org.MarkAsDeployed
+                    versionLabel: V1
+                    templateInputs:
+                      variables:
+                        - name: ReleaseName
+                          type: String
+                          value: <+pipeline.variables.ReleaseName>
+                        - name: ApiKey
+                          type: String
+                          value: <+pipeline.variables.api_key>
+                      delegateSelectors:
+                        - devx-demo-gke
+            rollbackSteps: []
+        tags: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: MarkAsFailure
+    - stage:
+        name: WaitRelease
+        identifier: WaitRelease
+        template:
+          templateRef: org.ReleaseReady
+          versionLabel: V1
+          templateInputs:
+            type: Approval
+            spec:
+              execution:
+                steps:
+                  - step:
+                      identifier: WaitRelease
+                      template:
+                        templateInputs:
+                          type: CustomApproval
+                          timeout: 1d
+                          spec:
+                            retryInterval: 1m
+                  - stepGroup:
+                      identifier: CreateTicket
+                      steps:
+                        - step:
+                            identifier: JiraCreate
+                            type: JiraCreate
+                            spec:
+                              connectorRef: account.Harness_JIRA
+                              projectKey: HD
+            variables:
+              - name: ReleaseName
+                type: String
+                value: <+pipeline.variables.ReleaseName>
+              - name: CreateTicket
+                type: String
+                value: "YES"
+              - name: api_key
+                type: String
+                value: <+pipeline.variables.api_key>
+              - name: FromEnv
+                type: String
+                value: UAT
+              - name: ToEnv
+                type: String
+                value: PROD
+            delegateSelectors:
+              - devx-demo-gke
+    - stage:
+        name: OkToGoToPRD
+        identifier: OkToPushToProd
+        description: ""
+        type: Approval
+        spec:
+          execution:
+            steps:
+              - step:
+                  name: JiraApproval
+                  identifier: JiraApproval
+                  type: JiraApproval
+                  timeout: 1d
+                  spec:
+                    approvalCriteria:
+                      type: KeyValues
+                      spec:
+                        matchAnyCondition: true
+                        conditions:
+                          - key: Status
+                            operator: equals
+                            value: Approved
+                    rejectionCriteria:
+                      type: KeyValues
+                      spec:
+                        matchAnyCondition: true
+                        conditions:
+                          - key: Status
+                            operator: equals
+                            value: Rejected
+                    connectorRef: account.Harness_JIRA
+                    projectKey: HD
+                    issueType: Task
+                    retryInterval: 1m
+                    issueKey: <+pipeline.stages.WaitRelease.spec.execution.steps.TicketID.output.outputVariables.ticketId>
+        tags: {}
+    - stage:
+        name: Deploy to PROD
+        identifier: Deploy_to_PROD
+        description: ""
+        type: Deployment
+        spec:
+          deploymentType: Kubernetes
+          service:
+            useFromStage:
+              stage: deploy_QA
+          environment:
+            environmentRef: PROD
+            deployToAll: false
+            infrastructureDefinitions:
+              - identifier: PROD_K8s
+          execution:
+            steps:
+              - step:
+                  name: WaitForDep
+                  identifier: WaitForDep
+                  template:
+                    templateRef: org.WaitDependencies
+                    versionLabel: V1
+                    templateInputs:
+                      type: CustomApproval
+                      spec:
+                        retryInterval: 1m
+                        environmentVariables:
+                          - name: RELEASE
+                            type: String
+                            value: <+pipeline.variables.ReleaseName>
+                          - name: API
+                            type: String
+                            value: <+pipeline.variables.api_key>
+                      timeout: 1d
+              - step:
+                  type: K8sRollingDeploy
+                  name: K8sRollingDep
+                  identifier: K8sRollingDep
+                  spec:
+                    skipDryRun: false
+                    pruningEnabled: false
+                  timeout: 10m
+              - stepGroup:
+                  name: MarkAsDep
+                  identifier: MarkAsDep
+                  template:
+                    templateRef: org.MarkAsDeployed
+                    versionLabel: V1
+                    templateInputs:
+                      variables:
+                        - name: ReleaseName
+                          type: String
+                          value: <+pipeline.variables.ReleaseName>
+                        - name: ApiKey
+                          type: String
+                          value: <+pipeline.variables.api_key>
+                      delegateSelectors:
+                        - devx-demo-gke
+            rollbackSteps: []
+        tags: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: MarkAsFailure
+    - stage:
+        name: CleanCache
+        identifier: CleanCache
+        template:
+          templateRef: org.ResetTicket
+          versionLabel: V1
+          templateInputs:
+            type: Custom
+            variables:
+              - name: API
+                type: String
+                value: <+pipeline.variables.api_key>
+              - name: RELEASE
+                type: String
+                value: <+pipeline.variables.ReleaseName>
+            delegateSelectors:
+              - devx-demo-gke
+  variables:
+    - name: api_key
+      type: Secret
+      description: ""
+      required: false
+      value: HarnessAPIKey
+    - name: ReleaseName
+      type: String
+      description: ""
+      required: true
+      value: <+input>.allowedValues(V1,V2,V3)
+  projectIdentifier: APP2
+  identifier: productcatalog_Deployment
+  name: productcatalog - Deployment

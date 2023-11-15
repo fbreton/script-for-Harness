@@ -1,0 +1,42 @@
+service:
+  name: productcatalog
+  identifier: productcatalog
+  orgIdentifier: <your organisation>
+  projectIdentifier: APP2
+  serviceDefinition:
+    spec:
+      artifacts:
+        primary:
+          primaryArtifactRef: <+input>
+          sources:
+            - spec:
+                connectorRef: FredDocker
+                imagePath: fbreton/productcatalog
+                tag: <+input>
+                digest: ""
+              identifier: deploy
+              type: DockerRegistry
+      manifests:
+        - manifest:
+            identifier: deploy
+            type: K8sManifest
+            spec:
+              store:
+                type: Harness
+                spec:
+                  files:
+                    - /Manifest/deploy.yaml
+              valuesPaths:
+                - /Manifest/Values.yaml
+              skipResourceVersioning: false
+              enableDeclarativeRollback: false
+      configFiles:
+        - configFile:
+            identifier: dependencies
+            spec:
+              store:
+                type: Harness
+                spec:
+                  files:
+                    - /<+pipeline.variables.ReleaseName>_productcatalog.json
+    type: Kubernetes

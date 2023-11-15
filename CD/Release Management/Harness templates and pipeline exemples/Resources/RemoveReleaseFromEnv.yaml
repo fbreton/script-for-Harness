@@ -1,0 +1,281 @@
+pipeline:
+  orgIdentifier: <your organisation>
+  stages:
+    - parallel:
+        - stage:
+            name: Uninstall QA
+            identifier: Uninstall
+            description: ""
+            type: Deployment
+            spec:
+              deploymentType: Kubernetes
+              execution:
+                steps:
+                  - step:
+                      type: K8sDelete
+                      name: K8sDelete
+                      identifier: K8sDelete
+                      spec:
+                        deleteResources:
+                          type: ReleaseName
+                          spec:
+                            deleteNamespace: false
+                      timeout: 10m
+                  - stepGroup:
+                      name: UncheckService
+                      identifier: UncheckService
+                      template:
+                        templateRef: org.UncheckService
+                        versionLabel: V1
+                        templateInputs:
+                          steps:
+                            - step:
+                                identifier: Uncheck
+                                type: ShellScript
+                                spec:
+                                  delegateSelectors:
+                                    - devx-demo-gke
+                          variables:
+                            - name: RELEASE
+                              type: String
+                              value: <+pipeline.variables.ReleaseName>
+                            - name: API
+                              type: String
+                              value: <+pipeline.variables.api_key>
+                rollbackSteps: []
+              services:
+                values:
+                  - serviceRef: productcatalog
+                    serviceInputs:
+                      serviceDefinition:
+                        type: Kubernetes
+                        spec:
+                          artifacts:
+                            primary:
+                              primaryArtifactRef: deploy
+                              sources:
+                                - identifier: deploy
+                                  type: DockerRegistry
+                                  spec:
+                                    tag: "1"
+                  - serviceRef: recommendation
+                    serviceInputs:
+                      serviceDefinition:
+                        type: Kubernetes
+                        spec:
+                          artifacts:
+                            primary:
+                              primaryArtifactRef: deploy
+                              sources:
+                                - identifier: deploy
+                                  type: DockerRegistry
+                                  spec:
+                                    tag: "1"
+                metadata:
+                  parallel: true
+              environment:
+                environmentRef: QA
+                deployToAll: false
+                infrastructureDefinitions:
+                  - identifier: qa_K8s
+            tags: {}
+            failureStrategies:
+              - onFailure:
+                  errors:
+                    - AllErrors
+                  action:
+                    type: MarkAsFailure
+            when:
+              pipelineStatus: Success
+              condition: (<+pipeline.variables.Environment> == "QA") or (<+pipeline.variables.Environment> == "ALL")
+        - stage:
+            name: Uninstall UAT
+            identifier: Uninstall_UAT
+            description: ""
+            type: Deployment
+            spec:
+              deploymentType: Kubernetes
+              execution:
+                steps:
+                  - step:
+                      type: K8sDelete
+                      name: K8sDelete
+                      identifier: K8sDelete
+                      spec:
+                        deleteResources:
+                          type: ReleaseName
+                          spec:
+                            deleteNamespace: false
+                      timeout: 10m
+                  - stepGroup:
+                      name: UncheckService
+                      identifier: UncheckService
+                      template:
+                        templateRef: org.UncheckService
+                        versionLabel: V1
+                        templateInputs:
+                          steps:
+                            - step:
+                                identifier: Uncheck
+                                type: ShellScript
+                                spec:
+                                  delegateSelectors:
+                                    - devx-demo-gke
+                          variables:
+                            - name: RELEASE
+                              type: String
+                              value: <+pipeline.variables.ReleaseName>
+                            - name: API
+                              type: String
+                              value: <+pipeline.variables.api_key>
+                rollbackSteps: []
+              services:
+                values:
+                  - serviceRef: recommendation
+                    serviceInputs:
+                      serviceDefinition:
+                        type: Kubernetes
+                        spec:
+                          artifacts:
+                            primary:
+                              primaryArtifactRef: deploy
+                              sources:
+                                - identifier: deploy
+                                  type: DockerRegistry
+                                  spec:
+                                    tag: "1"
+                  - serviceRef: productcatalog
+                    serviceInputs:
+                      serviceDefinition:
+                        type: Kubernetes
+                        spec:
+                          artifacts:
+                            primary:
+                              primaryArtifactRef: deploy
+                              sources:
+                                - identifier: deploy
+                                  type: DockerRegistry
+                                  spec:
+                                    tag: "1"
+                metadata:
+                  parallel: true
+              environment:
+                environmentRef: UAT
+                deployToAll: false
+                infrastructureDefinitions:
+                  - identifier: UAT_K8s
+            tags: {}
+            failureStrategies:
+              - onFailure:
+                  errors:
+                    - AllErrors
+                  action:
+                    type: MarkAsFailure
+            when:
+              pipelineStatus: Success
+              condition: (<+pipeline.variables.Environment> == "UAT") or (<+pipeline.variables.Environment> == "ALL")
+        - stage:
+            name: Uninstall PROD
+            identifier: Uninstall_PROD
+            description: ""
+            type: Deployment
+            spec:
+              deploymentType: Kubernetes
+              execution:
+                steps:
+                  - step:
+                      type: K8sDelete
+                      name: K8sDelete
+                      identifier: K8sDelete
+                      spec:
+                        deleteResources:
+                          type: ReleaseName
+                          spec:
+                            deleteNamespace: false
+                      timeout: 10m
+                  - stepGroup:
+                      name: UncheckService
+                      identifier: UncheckService
+                      template:
+                        templateRef: org.UncheckService
+                        versionLabel: V1
+                        templateInputs:
+                          steps:
+                            - step:
+                                identifier: Uncheck
+                                type: ShellScript
+                                spec:
+                                  delegateSelectors:
+                                    - devx-demo-gke
+                          variables:
+                            - name: RELEASE
+                              type: String
+                              value: <+pipeline.variables.ReleaseName>
+                            - name: API
+                              type: String
+                              value: <+pipeline.variables.api_key>
+                rollbackSteps: []
+              services:
+                values:
+                  - serviceRef: recommendation
+                    serviceInputs:
+                      serviceDefinition:
+                        type: Kubernetes
+                        spec:
+                          artifacts:
+                            primary:
+                              primaryArtifactRef: deploy
+                              sources:
+                                - identifier: deploy
+                                  type: DockerRegistry
+                                  spec:
+                                    tag: "1"
+                  - serviceRef: productcatalog
+                    serviceInputs:
+                      serviceDefinition:
+                        type: Kubernetes
+                        spec:
+                          artifacts:
+                            primary:
+                              primaryArtifactRef: deploy
+                              sources:
+                                - identifier: deploy
+                                  type: DockerRegistry
+                                  spec:
+                                    tag: "1"
+                metadata:
+                  parallel: true
+              environment:
+                environmentRef: PROD
+                deployToAll: false
+                infrastructureDefinitions:
+                  - identifier: PROD_K8s
+            tags: {}
+            failureStrategies:
+              - onFailure:
+                  errors:
+                    - AllErrors
+                  action:
+                    type: MarkAsFailure
+            when:
+              pipelineStatus: Success
+              condition: (<+pipeline.variables.Environment> == "PROD") or (<+pipeline.variables.Environment> == "ALL")
+  variables:
+    - name: ReleaseName
+      type: String
+      description: ""
+      required: true
+      value: <+input>.allowedValues(V1,V2,V3)
+    - name: api_key
+      type: Secret
+      description: ""
+      required: true
+      value: HarnessAPIKey
+    - name: Environment
+      type: String
+      description: ""
+      required: true
+      value: <+input>.allowedValues(QA,UAT,PROD,ALL)
+  projectIdentifier: APP2
+  identifier: RemoveReleaseFromEnv
+  name: RemoveReleaseFromEnv
