@@ -117,7 +117,7 @@ In each services is created a Config File with id *dependencies* with the name v
 
   ![CD pipeline](../pipeline.png "CD pipeline")  
 
-  You can find the service, environment and pipeline yaml files used for this exemple [here](Resources)
+  You can find the service, environment and pipeline yaml files used for this exemple [here](Resources)  
 
 ## Deploy stages
 
