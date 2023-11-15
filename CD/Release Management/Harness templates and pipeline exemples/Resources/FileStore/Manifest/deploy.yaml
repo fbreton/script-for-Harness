@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{lower .Values.name}}-deployment
+  labels:
+    tier: {{lower .Values.name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: {{lower .Values.name}}
+  template:
+    metadata:
+      labels:
+        tier: {{lower .Values.name}}
+    spec:
+      containers:
+      - name: {{lower .Values.name}}
+        image: {{lower .Values.image}}
+        imagePullPolicy: Always

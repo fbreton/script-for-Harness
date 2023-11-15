@@ -1,0 +1,6 @@
+[
+    {
+        "appId": "APP2",
+        "services": ["productcatalog"]
+    }
+]
