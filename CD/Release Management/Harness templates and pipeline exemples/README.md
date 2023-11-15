@@ -117,6 +117,10 @@ In each services is created a Config File with id *dependencies* with the name v
 
   ![CD pipeline](../pipeline.png "CD pipeline")  
 
+## Deploy stages
 
+All deploy stages (QA, UAT and PROD) are built in the same way to control the needed dependencies of the service before to deploy it and then to mark the service as deployed at the release level:  
+
+![CD pipeline](../deployment.png "CD pipeline")
 
 
