@@ -117,6 +117,8 @@ In each services is created a Config File with id *dependencies* with the name v
 
   ![CD pipeline](../pipeline.png "CD pipeline")  
 
+  You can find the service, environment and pipeline yaml files used for this exemple [here](Resources)
+
 ## Deploy stages
 
 All deploy stages (QA, UAT and PROD) are built in the same way to control the needed dependencies of the service have been deployed before to deploy the service and then to mark it as deployed at the release level:  
@@ -125,12 +127,12 @@ All deploy stages (QA, UAT and PROD) are built in the same way to control the ne
 
 The *WaitForDep* step uses the template [WaitDependencies](#WaitDependenciesyaml).  
 The *K8sRollingDep* step is the out of the box Kubernetes Rolling Deployment step.  
-The *MarkAsDep* step uses the template [MarkAsDeployed](#MarkAsDeployed.yaml).  
+The *MarkAsDep* step uses the template [MarkAsDeployed](#MarkAsDeployedyaml).  
 
 ## Other stages
 
 The *Ready for UAT* stage is an out of the box approval stage containing an Harness manual approval step.  
-The *WaitRelease* stage use the stage template [WaitRelease](#WaitRelease.yaml).  
+The *WaitRelease* stage use the stage template [WaitRelease](#WaitReleaseyaml).  
 The *OkToGoToPRD* stage is an out of the box approval stage containing an out of the box Jira Approval step.  
-The *CleanCache* stage use the stage template [ResetTicket](#ResetTicket.yaml).  
+The *CleanCache* stage use the stage template [ResetTicket](#ResetTicketyaml).  
 
