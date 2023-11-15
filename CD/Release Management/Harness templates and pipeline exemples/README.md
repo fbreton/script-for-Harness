@@ -123,7 +123,7 @@ All deploy stages (QA, UAT and PROD) are built in the same way to control the ne
 
 ![CD pipeline](../deployment.png "CD pipeline")  
 
-The *WaitForDep* step uses the template [WaitDependencies](#WaitDependencies.yaml).  
+The *WaitForDep* step uses the template [WaitDependencies](#Description##WaitDependencies.yaml).  
 The *K8sRollingDep* step is the out of the box Kubernetes Rolling Deployment step.  
 The *MarkAsDep* step uses the template [MarkAsDeployed](#MarkAsDeployed.yaml).  
 
