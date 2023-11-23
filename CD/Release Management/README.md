@@ -115,7 +115,7 @@ python3 WaitDependencies.py --account "$ACCOUNT" --api_key "$API" --OrgId "$ORG"
 **account**: Harness account id  
 **api_key**: Harness api key allowing to access to the targeted project with the needed rights  
 **OrgId**: Organisation identifier  
-**Service**: The service identifier that has to be installed 
+**Service**: The service identifier that has to be installed  
 **EnvId**: The environment identifier in which the service has to be installed  
 **RleaseName**: The release name associated with the deployment  
 **dependencies**: the dependencies to check  
